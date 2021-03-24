@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AppMaker Designer</title>
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/components/Polymer/webcomponentsjs/webcomponents.js"></script>
+	<link rel="import" href="/components/Core/itemtrigger-element.html">
+	<link rel="import" href="/components/Core/itemdrop-element.html">
+	<link rel="import" href="/components/Core/item-panel-element.html">
+	<style type="text/css">
+    html,body,.row,.container-fluid,.col-md-8,.col-md-2 { height: 100%; }
+    .panel { height:95%; }
+    #tabw {height:90%; }
+    .form-control { margin:5px; width:95%}
+  	body { padding-top: 70px; background-color:#ecf0f1;}
+	</style>
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+	  <div class="container-fluid">
+		  <div class="navbar-header">
+		  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+			<span class="sr-only">Navigasyon</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		  </button>
+		  <a class="navbar-brand" href="#">AppMaker</a>
+		</div>
+		 <ul class="nav navbar-nav">
+			<li>
+				<form class="navbar-form navbkar-left">
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="Proje Adı">
+						<div class="btn-group">
+						  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> İndir
+							<span class="caret"></span>
+						  </button>
+						  <ul class="dropdown-menu" role="menu">
+							<li><a href="#">Android</a></li>
+							<li><a href="#">Windows</a></li>
+							<li><a href="#">iOS</a></li>
+						  </ul>
+						</div>
+					</div>
+				</form>
+			</li>
+		 </ul>
+		<ul class="nav navbar-nav navbar-right">
+			<li>
+				<form class="navbar-form navbkar-left">
+					<div class="btn-group" role="group" aria-label="...">
+						<button type="button" class="btn btn-primary disabled">Düzenle</button>
+						<button type="button" class="btn btn-default">Çalıştır</button>
+					</div>
+				</form>
+			</li>
+		</ul>
+
+	  </div>
+	</nav>
+
+   <div class="container-fluid">
+	<div class="row">
+
+		<div id="leftp" class="col-md-2">
+
+			<ul class="nav nav-sidebar">
+				<ul class="list-group">
+
+				<a href="javascript:createpage()" class="list-group-item">
+				 Yeni Sayfa Oluştur
+				</a>
+
+				<div id="pages"></div>
+				</ul>
+			</ul>
+			<ul class="nav nav-sidebar" id="components">
+			<div id="tree"></div>
+			</ul>
+
+		</div>
+		<div id="center" class="col-md-8">
+		<div id="tabss" class="btn-group" role="group">
+		</div>
+
+		<div id="tabw" class="panel panel-default">
+        </div>
+
+		</div>
+		<div id="rightp" class="col-md-2" >
+      <div class="panel panel-default">
+        <div id="proptype" class="panel-heading">Buton</div>
+        <ul class="nav nav-sidebar">
+		<div class="form-group">
+          <input type="text" class="form-control" placeholder="Nesne Adı" />
+          <input type="text" class="form-control" placeholder="" />
+		</div>
+        </ul>
+      </div>
+		</div>
+	</div>
+
+	</div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+	<script src="/js/bootstrap-treeview.min.js"></script>
+	<script type="text/javascript" src="/index.js"></script>
+	<script type="text/javascript">
+
+  function getProjectID() {
+    var myRegexp = /\/IDE\/(.*?)$/g;
+    var match = myRegexp.exec(document.URL);
+    if (match != null)
+        return match[1];
+    else return "";
+  }
+  var pID = getProjectID();
+
+  function rData() {
+    $.post('/project', {
+        'id': pID
+    }).then(function(res) {
+            document.title = "AppMaker - " + res.name;
+            var pages = res.pages;
+            var rpages = [];
+            var d, i, len, pagetree;
+            if (typeof pages === "undefined" || pages === null) {
+                pages = [];
+            }
+            var keys = Object.keys(pages);
+            for (i = 0, len = keys.length; i < len; i++) {
+                rpages[i] = {
+                    href: 'javascript:opendesigner(\'' + keys[i] + '\',\'' + pages[keys[i]] + '\')',
+                    text: '<span> ' + keys[i] + '</span>',
+                    selectable: false,
+                    nodeId: 'pg' + keys[i]
+                };
+            }
+            pagetree = [{
+                text: 'Sayfalar',
+                selectable: false,
+                nodes: rpages
+            }];
+            $('#pages').treeview({
+                data: pagetree,
+                enableLinks: true
+            });
+          });
+      }
+  $(document).ready(function() {
+      rData();
+  });
+
+  $('label.tree-toggler').click(function() {
+      $(this).parent().children('ul.tree').toggle(300);
+  });
+
+  var tree = [{
+      text: "Modüller",
+      selectable: false,
+      icon: " ",
+      nodes: [{
+          text: "Temel Modüller",
+          selectable: false,
+          icon: " ",
+          nodes: [{
+              text: '<itemtrigger-element type="button" draggable="true">Buton</itemtrigger-element>',
+              selectable: false,
+              icon: " "
+          }, {
+              text: '<itemtrigger-element type="input" draggable="true">Yazı Kutusu</itemtrigger-element>',
+              selectable: false,
+              icon: " "
+          }, {
+              text: '<itemtrigger-element type="textarea" draggable="true">Yazı Alanı</itemtrigger-element>',
+              selectable: false,
+              icon: " "
+          }, {
+              text: '<itemtrigger-element type="item-panel-element" draggable="true">Panel</itemtrigger-element>',
+              selectable: false,
+              icon: " "
+          }]
+      }]
+  }];
+
+  $('#tree').treeview({
+      data: tree
+  });
+	</script>
+  </body>
+</html>

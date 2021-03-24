@@ -1,0 +1,38 @@
+<link rel="import" href="../Polymer/polymer/polymer.html">
+<link rel="import" href="item-element.html">
+<link rel="import" href="itemdrop-element.html">
+<polymer-element name="item-panel-element" attributes="iid header" extends="item-element">
+
+  <template>
+  <style>
+  :host{
+	width:15%;
+	height:50%;
+  }
+  itemdrop-element{
+	width:100%;
+	height:85%;
+	background-color:aqua;
+  }
+  h1{
+	width:100%;
+	height:15%;
+	background-color:blue;
+  }
+	</style>
+	<h1>{{header}}</h1>
+	<itemdrop-element></itemdrop-element>
+  </template>
+
+  <script>
+
+    Polymer({
+		ready: function(){
+			 this.super();
+
+		}
+    });
+
+  </script>
+
+</polymer-element>

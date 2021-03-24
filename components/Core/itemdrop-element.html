@@ -1,0 +1,52 @@
+<link rel="import" href="../Polymer/polymer/polymer.html">
+
+<polymer-element name="itemdrop-element">
+
+  <template>
+    <style>
+	:host{
+		width:100%;
+		height:100%;
+		position:absolute;
+	}
+	</style>
+	<content></content>
+  </template>
+
+  <script>
+
+    Polymer({
+		ready: function(){
+		    this.addEventListener('drop', this.handleDrop, false);
+				this.addEventListener('dragover', this.handleDragOver, false);
+			  this.addEventListener('dragend', this.handleDragEnd, false);
+			  this.addEventListener('dragenter', this.handleDragEnter, false);
+			  this.addEventListener('dragleave', this.handleDragLeave, false);
+			},
+
+		handleDrop:	function (e) {
+			  if (e.stopPropagation) { e.stopPropagation(); }
+        //$.post('/page/update',{node:this.parentNode.id,element:elm});
+			  return false;
+			},
+		handleDragOver:	function (e) {
+			  if (e.preventDefault) {	e.preventDefault(); }
+			  e.dataTransfer.dropEffect = 'move';
+			  return false;
+	    },
+    handleDragEnter:function (e) {
+        e.target.innerHTML += doElement.outerHTML;
+			},
+    handleDragLeave:function (e) {
+        $('#'+doElement.id).remove();
+			},
+    handleDragEnd:function (e) {
+        $('#'+doElement.id).remove();
+			}
+
+    });
+
+
+  </script>
+
+</polymer-element>

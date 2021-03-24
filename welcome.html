@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AppMaker Designer</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<style type="text/css">
+    html,body,.row,.container-fluid,.col-md-8,.col-md-2 { height: 100%; }
+    .panel { height:96%; }
+    .form-control { margin:5px; width:95%}
+  	body { padding-top: 2%; background-color:#ecf0f1;}
+	</style>
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+   </head>
+<body>
+<div class="panel panel-default">
+
+	<div class="panel-body flex-grow">
+
+	<div class="col-md-4">
+		<div id="projeler" class="list-group">
+		  <a href="#" class="list-group-item active" >
+			Oluşturulan Projeler<input type="text" class="form-control"  style="width:45%;float:right;display:inline;" placeholder="Arama">
+		  </a>
+
+		</div>
+		<button type="button" class="btn btn-default" onclick="createproject()">
+			<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Oluştur
+		</button>
+	</div>
+
+	<div class="col-md-4">
+		<div id="haberler" class="list-group">
+		  <a href="#" class="list-group-item active">
+			Haberler
+		  </a>
+		  <a href="#" class="list-group-item">
+			Projemiz hızla devam ediyor.
+		  </a>
+
+		  <a href="#" class="list-group-item">
+			Artık Windows desteğimiz de var.
+		  </a>
+		</div>
+	</div>
+
+		<div class="col-md-4">
+		<div class="panel panel-primary">
+		  <div class="panel-heading">
+			<h3 class="panel-title">Profil</h3>
+		  </div>
+		  <div class="panel-body">
+			<img height="70" width="60" src="#" alt="" /><br /><br />
+			<div class="panel panel-default" >
+			<div class="panel-heading"><span>Hüseyin AKBAŞ</span><br /></div>
+			<div class="panel-body">
+			<span class="label label-info">Yetki</span> Programcı<br />
+			<span class="label label-info">Firma</span> HSOFT<br />
+			</div>
+			</div>
+		  </div>
+		</div>
+	</div>
+
+
+
+	</div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
+
+function loadProjectList(){
+  $.get('/projectList',function(res){
+    for (var item in res){
+      item = res[item];
+      $('#projeler').append($('<p>').html(item.name).attr('id',item._id).attr('onclick',"window.open('/IDE/"+item._id+"', '_blank');").attr('class','list-group-item').append(
+        '&nbsp;<span class="glyphicon glyphicon-pencil" style="cursor:pointer;" aria-hidden="true"></span> \
+        <span class="glyphicon glyphicon-trash" style="cursor:pointer;" onclick="deleteproject(\''+item._id+'\')" aria-hidden="true"></span>'
+     ));
+    }
+  });
+}
+
+function createproject(){
+  var data=prompt('Proje İsmini Girin:');
+  if(data){
+    $.post('/project/create',{projectname:data}).then(function(id){
+      $('#projeler').append($('<p>').html(data).attr('id',id).attr('onclick',"window.open('/IDE/"+id+"', '_blank');").attr('class','list-group-item').append(
+      '&nbsp;<span class="glyphicon glyphicon-pencil" style="cursor:pointer;" aria-hidden="true"></span> \
+      <span class="glyphicon glyphicon-trash" style="cursor:pointer;" onclick="deleteproject(\''+id+'\')" aria-hidden="true"></span>'
+      ));
+    });
+  }
+}
+
+function deleteproject(id){
+  if(confirm('Silmek İstediğinize Emin Misiniz?')){
+  $.post('/project/delete',{'id':id}).then(function(idd){
+    $('#'+idd).remove();
+  });
+  }
+}
+
+$(document).ready(function(){
+  loadProjectList();
+});
+</script>
+</body>

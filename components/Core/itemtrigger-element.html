@@ -1,0 +1,51 @@
+<link rel="import" href="../Polymer/polymer/polymer.html">
+
+<polymer-element name="itemtrigger-element" attributes="type">
+
+  <template>
+    <style>
+	[draggable] {
+	  -moz-user-select: none;
+	  -khtml-user-select: none;
+	  -webkit-user-select: none;
+	  user-select: none;
+	  /* Required to make elements draggable in old WebKit */
+	  -khtml-user-drag: element;
+	  -webkit-user-drag: element;
+	}
+	</style>
+	<content>
+
+	</content>
+  </template>
+  <script>
+    var doElement = null;
+    Polymer({
+		ready: function(){
+			  this.addEventListener('dragstart', this.handleDragStart, false);
+			  this.addEventListener('dragover', this.handleDragOver, false);
+
+
+			},
+		handleDragStart:function (e) {
+				  this.style.opacity = '0.4';
+				  e.dataTransfer.effectAllowed = 'move';
+          var el = document.createElement(this.type);
+          if( !(this.type in elementids) ) elementids[this.type] = 0 ;
+          el.id = 'el' + this.type + elementids[this.type];
+          elementids[this.type]++;
+          doElement = el;
+				  e.dataTransfer.setData('text/html', el.outerHTML);
+			},
+		handleDragOver:	function (e) {
+				  if (e.preventDefault) {e.preventDefault(); }
+				  e.dataTransfer.dropEffect = 'move';
+          //console.log(e);
+				  return false;
+			}
+    });
+
+
+  </script>
+
+</polymer-element>
